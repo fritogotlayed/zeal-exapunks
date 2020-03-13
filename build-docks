@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Build docs
+mkdocs build
+
+echo 'Copy docs to proper folder'
+rm -rf ./Exapunks.dockset/Contents/Resources/Documents/
+mkdir -p ./Exapunks.dockset/Contents/Resources/Documents/
+cp -R ./site/* ./Exapunks.dockset/Contents/Resources/Documents/
+rm -rf ./site
+
+echo 'Create sqlite3 index file'
+rm -f ./Exapunks.dockset/Contents/Resources/docSet.dsidx
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx 'CREATE TABLE searchIndex(id INTEGER PRIMARY KEY, name TEXT, type TEXT, path TEXT);'
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx 'CREATE UNIQUE INDEX anchor ON searchIndex (name, type, path);'
+
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Language', 'Section', 'language/index.html#language');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Registers', 'Section', 'language/index.html#registers');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('x', 'Property', 'language/index.html#x');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('t', 'Property', 'language/index.html#t');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('f', 'Property', 'language/index.html#f');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('m', 'Property', 'language/index.html#m');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Hardware Registers', 'Section', 'language/index.html#hardware-registers');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Manipulating Values', 'Section', 'language/index.html#manipulating-values');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('COPY', 'Command', 'language/index.html#copy');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('ADDI', 'Command', 'language/index.html#addi');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('SUBI', 'Command', 'language/index.html#subi');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('MULI', 'Command', 'language/index.html#muli');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('DIVI', 'Command', 'language/index.html#divi');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('MODI', 'Command', 'language/index.html#modi');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('SWIZ', 'Command', 'language/index.html#swiz');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Branching', 'Section', 'language/index.html#branching');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('MARK', 'Command', 'language/index.html#mark');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('JUMP', 'Command', 'language/index.html#jump');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('TJMP', 'Command', 'language/index.html#tjmp');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('FJMP', 'Command', 'language/index.html#fjmp');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Testing Values', 'Section', 'language/index.html#testing-values');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('TEST', 'Command', 'language/index.html#test');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('Lifecycle', 'Section', 'language/index.html#lifecycle');"
+sqlite3 ./Exapunks.dockset/Contents/Resources/docSet.dsidx "INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES ('REPL', 'Command', 'language/index.html#repl');"
+
+echo 'Creating tar file'
+rm -f Exapunks.tgz
+tar --exclude='.DS_Store' -czf Exapunks.tgz Exapunks.dockset
